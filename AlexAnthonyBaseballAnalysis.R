@@ -1,15 +1,15 @@
 # Final Project: Baseball Data Analysis
 
 # Eliminate unneeded columns from Batting table, namely "stint"
-keeps1 <- c("playerID", "yearID", "teamID", "lgID", "G", "AB", "R", "H", "X2B", "X3B", "RBI", "SB", "CS", "SO", "IBB", "SH", "SF", "GIDP")
+keeps1 <- c("playerID", "yearID", "G", "AB", "R", "H", "X2B", "X3B", "RBI", "SB", "CS", "SO", "IBB", "SH", "SF", "GIDP")
 Batting1 <- Batting[keeps1]
 
 # Eliminate unneeded columns from Pitching table, namely "stint"
-keeps2 <- c("playerID", "yearID", "teamID", "lgID", "W", "L", "G", "GS", "CG", "SHO", "SV", "IPouts", "H", "ER", "HR", "BB", "SO", "BAOpp", "ERA")
+keeps2 <- c("playerID", "yearID", "W", "L", "G", "GS", "CG", "SHO", "SV", "IPouts", "H", "ER", "HR", "BB", "SO", "BAOpp", "ERA")
 Pitching1 <- Pitching[keeps2]
 
 # Eliminate unneeded columns from Fielding table, namely "stint"
-keeps3 <- c("playerID", "yearID", "teamID", "lgID", "POS", "G", "GS", "InnOuts", "PO", "A", "E", "DP", "PB", "WP", "SB", "CS", "ZR")
+keeps3 <- c("playerID", "yearID", "POS", "G", "GS", "InnOuts", "PO", "A", "E", "DP", "PB", "WP", "SB", "CS", "ZR")
 Fielding1 <- Fielding[keeps3]
 
 # Merge "People" data frame and "Salaries" data frame by "playerID"
