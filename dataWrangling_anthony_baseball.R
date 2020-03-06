@@ -36,3 +36,9 @@ View(pitching8516)
 #Fielding 1985-2016
 fielding8516 <- Fielding[ which(Fielding$yearID > 1984 & Fielding$yearID < 2017), ]
 View(fielding8516)
+
+#Remove NA from any dataset, based on final datasets that have been merged together baseball0, baseball1, baseball2 and teamSalaries
+baseball001 <- na.omit(baseball0)
+baseball100 <- na.omit(baseball1)
+baseball200 <- na.omit(basbeall2)
+teamSalaries300 <- na.omit(teamSalaries)
