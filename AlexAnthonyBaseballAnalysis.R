@@ -40,8 +40,14 @@ Teams1$teamid[Teams1$teamID == 'FLO'] <- 'MIA'
 Teams1$teamID[Teams1$teamID == 'ML4'] <- 'MIL'
 Teams1$teamID[Teams1$teamID == 'MON'] <- 'WAS'
 
+Salaries1$teamID[Salaries1$teamID == 'ANA'] <- 'LAA'
+Salaries1$teamID[Salaries1$teamID == 'CAL'] <- 'LAA'
+Salaries1$teamid[Salaries1$teamID == 'FLO'] <- 'MIA'
+Salaries1$teamID[Salaries1$teamID == 'ML4'] <- 'MIL'
+Salaries1$teamID[Salaries1$teamID == 'MON'] <- 'WAS'
+
 # Merge "People" data frame and "Salaries" data frame by "playerID"
-baseballSalaries <- merge(People, Salaries, by=c("playerID"), all=TRUE)
+baseballSalaries <- merge(Players1, Salaries1, by=c("playerID"), all=TRUE)
 
 # Merge "Fielding" data frame and "baseballSalaries" data frame by "playerID"
 baseball0 <- merge(Fielding1, baseballSalaries, by=c("playerID"), all=TRUE)
@@ -53,4 +59,4 @@ baseball1 <- merge(Batting1, baseball0, by=c("playerID"), all=TRUE)
 baseball2 <- merge(Pitching1, baseball0, by=c("playerID"), all=TRUE)
 
 # Merge "Teams" data frame and "Salaries" data frame by "teamID"
-teamSalaries <- merge(Teams, Salaries, by=c("teamID"), all=TRUE)
+teamSalaries <- merge(Teams1, Salaries1, by=c("teamID"), all=TRUE)
