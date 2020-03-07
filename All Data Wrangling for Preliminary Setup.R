@@ -33,8 +33,6 @@ colnames(Teams)
 keeps6 <- c("yearID", "teamID", "W", "L", "R", "AB", "H", "X2B", "X3B", "HR", "BB", "SO", "SB", "CS", "HBP", "SF", "RA", "ER", "ERA", "CG", "SHO", "SV", "IPouts", "HA", "HRA", "BBA", "SOA", "E", "DP", "FP", "name", "attendance")
 Teams0 <- Teams[keeps6]
 
-
-
 Salaries1$teamID[Salaries1$teamID == 'ANA'] <- 'LAA'
 Salaries1$teamID[Salaries1$teamID == 'CAL'] <- 'LAA'
 Salaries1$teamid[Salaries1$teamID == 'FLO'] <- 'MIA'
@@ -72,6 +70,7 @@ View(Teams1)
 
 # Merge "People" data frame and "Salaries" data frame by "playerID"
 baseballSalaries <- merge(Players1, Salaries1, by=c("playerID"), all=TRUE)
+View(baseballSalaries)
 
 # Merge "Fielding" data frame and "baseballSalaries" data frame by "playerID"
 baseball0 <- merge(fielding8516, baseballSalaries, by=c("playerID"), all=TRUE)
@@ -99,4 +98,14 @@ View(teamSalaries2)
 teamSalariesSTY <- aggregate(teamSalaries$salary, by=list(Category=teamSalaries$teamID, teamSalaries$yearID.x), FUN=sum)
 View(teamSalariesSTY)
 
+#Simple Player Salaries Dataset only PlayerID, yearId, salary
+keepsSmall <- c("playerID", "yearID", "salary")
+PlayersSimple <- baseballSalaries[keepsSmall]
+View(PlayersSimple)
 
+#Export Datasets to excel for sharing
+library(openxlsx)
+write.xlsx(teamSalariesSTY, "/users/anthonyzippay/documents/teamSalariesSTY.xlsx")
+write.xlsx(teamSalaries, "/users/anthonyzippay/documents/teamSalaries.xlsx")
+write.xlsx(PlayersSimple, "/users/anthonyzippay/documents/PlayersSimple.xlsx")
+write.xlsx(baseballSalaries, "/users/anthonyzippay/documents/baseballSalaries.xlsx")
