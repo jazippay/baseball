@@ -86,10 +86,10 @@ teamSalaries <- merge(Teams1, Salaries1, by=c("teamID"), all=TRUE)
 View(teamSalaries)
 
 #Remove NA from any dataset, based on final datasets that have been merged together baseball0, baseball1, baseball2 and teamSalaries
-#baseball00 <- na.omit(baseball0)
-#baseball111 <- na.omit(baseball1)
-#baseball22 <- na.omit(basbeall2)
-#this was not working for me, something might not be right...
+baseball00 <- na.omit(baseball0)
+baseball111 <- na.omit(baseball1)
+baseball22 <- na.omit(basbeall2)
+teamSalaries0 <- na.omit(teamSalaries)
 
 #Aggregate/Sum Salaries by Team
 teamSalaries2 <- aggregate(teamSalaries$salary, by=list(Category=teamSalaries$teamID), FUN=sum)
