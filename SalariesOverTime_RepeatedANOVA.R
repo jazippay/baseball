@@ -27,6 +27,7 @@ View(baseballSalaries0NA)
 
 #Re-code teamID
 table(baseballSalaries0NA$teamID)
+length(table(baseballSalaries0NA$teamID))
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='ANA'] <- 0
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='ARI'] <- 1
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='ATL'] <- 2
@@ -61,6 +62,7 @@ baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='TBA'] <- 30
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='TEX'] <- 31
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='TOR'] <- 32
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='WAS'] <- 33
+baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='MIL'] <- 34
 
 keepit <- c("yearID", "teamIDR", "salary")
 teamSalaries <- baseballSalaries0NA[keepit]
