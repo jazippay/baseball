@@ -2,10 +2,10 @@ library("rcompanion")
 library("car")
 library("fastR")
 library(dbplyr)
-
+library(ggplot2)
 
 #Repeated Measures ANOVA - How has player salary changed over time?
-#indepeendent variable is yearID
+#independent variable is yearID
 
 #Creating a Dataframe of necessary columns
 keeps <- c("yearID", "salary", "playerID", "teamID")
@@ -25,7 +25,7 @@ baseballSalaries0NA$teamID[baseballSalaries0NA$teamID == 'MON'] <- 'WAS'
 
 View(baseballSalaries0NA)
 
-#Re-code teamID
+#Re-code teamID as numeric
 table(baseballSalaries0NA$teamID)
 length(table(baseballSalaries0NA$teamID))
 baseballSalaries0NA$teamIDR[baseballSalaries0NA$teamID=='ANA'] <- 0
@@ -68,14 +68,45 @@ keepit <- c("yearID", "teamIDR", "salary")
 teamSalaries <- baseballSalaries0NA[keepit]
 View(teamSalaries)
 
-#Correlation matrix to determine related variables
-res <- cor(teamSalaries)
-round(res, 2)
-#Actual reshaping of data
-teamSalaries1 <- make.rm(constant=c("yearID", "teamIDR"), 
-                      repeated=c("salary"), 
-                      data=teamSalaries)
-View(teamSalaries1)
+#break down years to every 5 years or so
+# Subset to only include data from 2000-2016 (the years for which we have salary information)
+teamSalaries2000 <- teamSalaries[which(teamSalaries$yearID > 1999 & teamSalaries$yearID < 2017), ]
+
+#convert yearID to factor
+teamSalaries2000$yearID <- as.factor(as.numeric(teamSalaries2000$yearID))
+
+View(teamSalaries2000)
+#cant do corr now that its a factor
+
+#Other Data Explorations
+ggplot(teamSalaries2000, aes(x = factor(yearID), y = salary)) + geom_boxplot()
+ggplot(baseballSalaries0NA) + geom_line(aes(x = yearID, y = salary, color = teamID)) +
+ylab("Salaries Per Team") + ggtitle("MLB Salaries Per Year")
+baseballSalariesAgg <- aggregate(salary~teamID, baseballSalaries0NA, mean)
+baseballSalariesAgg
+ggplot(baseballSalariesAgg, aes(sample = salary)) + geom_qq()
+baseballSalariesAgg %>% group_by(salary) %>% summarize(count = n())
+
+#is there a linear relationship between the increase of salary over time? salary is y
+d <- ggplot(teamSalaries, aes(x = yearID, y = salary))
+d + geom_point() + geom_smooth(method=lm, se=FALSE)
+#linear model, yearID as factor
+lin_reg <- lm(salary ~ yearID, teamSalaries2000)
+summary(lin_reg)
+#linear model, yearID as numeric
+lin_reg <- lm(salary ~ yearID, teamSalaries)
+summary(lin_reg)
+
+cor.test(teamSalaries$teamIDR, teamSalaries$salary, method="pearson", use = "complete.obs")
+# p value = 1.604e-08, significant correlation of team and salary, 
+#does this signal a relationship between the variance in spending?
+#does this signal that teams are planning to spend more year to year strategically? 
+#or are these correlated because there are just simply related? teams spend more or less and its different every year?
+
+#For exporting
+#library(openxlsx)
+#write.xlsx(teamSalaries, "/users/anthonyzippay/documents/teamSalaries.xlsx")
+
 
 #Normality
 plotNormalHistogram(baseballSalaries4$salary)
@@ -84,4 +115,13 @@ plotNormalHistogram(baseballSalaries4$salarySQRT)
 baseballSalaries4$salaryLOG <- log(baseballSalaries4$salary)
 plotNormalHistogram(baseballSalaries4$salaryLOG)
 
-leveneTest(repdat ~ yearID*contrasts, data=teamSalaries1)
+#Assumptions for ANOVA
+leveneTest(salary ~ yearID, data=teamSalaries2000)
+#significant, assumption not met
+#DS0106, meredith said this assumption doesnt matter because the dataset is so large
+
+
+#group by teamID and avg salaries and run a repeated measures ANOVA or continue with linear regression model, (avg player salaries by team)
+
+
+
