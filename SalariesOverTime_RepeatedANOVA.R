@@ -83,7 +83,7 @@ ggplot(teamSalaries2000, aes(x = factor(yearID), y = salary)) + geom_boxplot()
 ggplot(baseballSalaries0NA) + geom_line(aes(x = yearID, y = salary, color = teamID)) +
 ylab("Salaries Per Team") + ggtitle("MLB Salaries Per Year")
 baseballSalariesAgg <- aggregate(salary~teamID, baseballSalaries0NA, mean)
-baseballSalariesAgg
+View(baseballSalariesAgg)
 ggplot(baseballSalariesAgg, aes(sample = salary)) + geom_qq()
 baseballSalariesAgg %>% group_by(salary) %>% summarize(count = n())
 
@@ -120,8 +120,76 @@ leveneTest(salary ~ yearID, data=teamSalaries2000)
 #significant, assumption not met
 #DS0106, meredith said this assumption doesnt matter because the dataset is so large
 
+#Repeated measures ANOVA years 2000-2016, salary changes per year
+RManova <- aov(salary~yearID+Error(teamIDR), teamSalaries2000)
+summary(RManova)
+#Overall test was significant
 
 #group by teamID and avg salaries and run a repeated measures ANOVA or continue with linear regression model, (avg player salaries by team)
+#example of range of years code
+#babies$WeightR <- NA
+#babies$WeightR[babies$Weight > 5 & babies$Weight <10] <- 0
+
+#MEAN AND MEDIAN SALARIES 1985-2016 BY TEAM, starting with baseballSalariesM - salary=numeric, yearID=numeric, teamID=factor, playerID=character
+teamMed <- aggregate(salary~teamID, baseballSalaries0NA, median)
+View(teamMed)
+baseballSalariesAgg <- aggregate(salary~teamID, baseballSalaries0NA, mean)
+View(baseballSalariesAgg)
+
+#How have salaries changed over time by team during the pre and post analytic eras?
+#starting with baseballSalariesM - salary=numeric, yearID=numeric, teamID=factor, playerID=character
+# Recode "teamID" so singular franchises are consistent
+baseballSalariesM$teamID[baseballSalariesM$teamID == 'ANA'] <- 'LAA'
+baseballSalariesM$teamID[baseballSalariesM$teamID == 'CAL'] <- 'LAA'
+baseballSalariesM$teamID[baseballSalariesM$teamID == 'FLO'] <- 'MIA'
+baseballSalariesM$teamID[baseballSalariesM$teamID == 'ML4'] <- 'MIL'
+baseballSalariesM$teamID[baseballSalariesM$teamID == 'MON'] <- 'WAS'
+#baseballSalariesM = 1985-2016 date range
+
+keeps10 <- c("yearID", "salary", "teamID")
+baseballSalariesM <- baseballSalariesM[keeps10]
+
+#Mean Salaries By Team 1995-1999 and 2015-2019, creating data frames to work with
+#teamAvgSalaries9599 = a subset of years from baseballSalariesM, teams, salary, year, 1995-1999
+teamAvgSalaries9599 <- baseballSalariesM[which(baseballSalariesM$yearID > 1994 & baseballSalariesM$yearID < 2000), ]
+#teamsAvgSalaries1519 = a subset of years from baseballSalariesM,teams, salary, year, 2015-2019
+teamAvgSalaries1519 <- baseballSalariesM[which(baseballSalariesM$yearID > 2010 & baseballSalariesM$yearID < 2017), ]
+
+
+#Average out salaries for each year by team for each data frame
+teamAvgSalariesPre <- aggregate(teamAvgSalaries9599[2], list(teamAvgSalaries9599$teamID, teamAvgSalaries9599$yearID), mean)
+View(teamAvgSalariesPre)
+
+teamAvgSalariesModern <- aggregate(teamAvgSalaries1519[2], list(teamAvgSalaries1519$teamID, teamAvgSalaries1519$yearID), mean)
+View(teamAvgSalariesModern)
+
+#library(dplyr)
+#teamAvgSalaries9599 %>%
+#  group_by(yearID, teamID) %>% 
+#  summarise_each(funs(mean))
+#teamAvgSalaries1519 %>%
+#  group_by(yearID, salary, teamID) %>% 
+#  summarise_each(funs(mean))
+
+#Repeated Measurses ANOVA on Modern and Pre Analytics Data frames
+#Assumptions for ANOVA
+leveneTest(salary ~ Group.2, data=teamAvgSalariesPre)
+
+#Repeated measures ANOVA years 2000-2016, salary changes per year
+PreAnova <- aov(salary~Group.2+Error(Group.1), teamAvgSalariesPre)
+summary(PreAnova)
+#different salaries and teams not significant
+#different salaries and years significant
+
+ModernAnova <- aov(salary~Group.2+Error(Group.1), teamAvgSalariesModern)
+summary(ModernAnova)
+#no p value given for salaries and teams
+#significant p value for salaries and years
+
+#Export Pre and Modern Data frames
+write.xlsx(teamAvgSalaries1519, "/users/anthonyzippay/documents/teamAvgSalaries1519.xlsx")
+write.xlsx(teamAvgSalaries9599, "/users/anthonyzippay/documents/teamAvgSalaries9599.xlsx")
+
 
 
 
