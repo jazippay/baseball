@@ -34,6 +34,8 @@ lin_reg <- lm(AB ~ WAR, warBatting2000)
 summary(lin_reg)
 #Adjusted R-sqaured .30
 #significant p value
+#therefore At bats (AB) tells us about 20% or 30% in the modern era of the factors that go into WAR
+
 
 #Create a Dataframe of WAR and IPouts from warPitchNA
 #Create 3 Different dataframes based on range of years; 95-2019,95-99 and 2015-2019
@@ -54,3 +56,15 @@ lin_reg <- lm(IPouts ~ WAR, warPitch2000)
 summary(lin_reg)
 #Adjusted R-sqaured .39
 #significant p value
+#therefore, IPouts determine atleast 40% of the factors that go into WAR, not too shabby
+#final conclusion there must be some other factors that determine WAR in both pitching and batting. 
+#But IPouts explain the variability of WAR in pitching more so than AB explains WAR in batting
+
+#Plot of linear models
+library(ggplot2)
+d <- ggplot(warPitch90, aes(x = WAR, y = IPouts))
+d + geom_point() + geom_smooth(method=lm, se=FALSE)
+#the linear relationship can be seen much more easily with IPouts to WAR then AB to WAR
+ggplot(warBatting2000, aes(WAR, AB)) +
+  geom_point() +
+  geom_smooth(method = "lm")
